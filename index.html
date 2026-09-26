@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>亚露自恋特质类型自测</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(135deg, #f4ecff 0%, #eaf7ff 100%);
+      color: #2d2d2d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: min(760px, 100%);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      box-shadow: 0 20px 45px rgba(125, 90, 180, 0.12);
+      padding: 36px 30px 28px;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: clamp(28px, 4vw, 40px);
+      color: #5a3ea8;
+    }
+
+    .quiz-box {
+      border: 1px solid #e8ddff;
+      background: #faf7ff;
+      border-radius: 18px;
+      padding: 26px 22px;
+    }
+
+    .intro-title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      color: #5a3ea8;
+    }
+
+    .intro-note {
+      margin: 0 0 20px;
+      color: #625d70;
+      line-height: 1.6;
+    }
+
+    .profile-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .profile-preview {
+      padding: 14px 0;
+      border-top: 1px solid #e8ddff;
+    }
+
+    .profile-preview h3 {
+      margin: 0 0 5px;
+      font-size: 17px;
+      color: #3f3a4c;
+    }
+
+    .profile-preview p {
+      margin: 0;
+      color: #625d70;
+      line-height: 1.6;
+    }
+
+    .question-index {
+      font-size: 14px;
+      color: #7e6bb2;
+      margin-bottom: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .question-text {
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.6;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #2d2d2d;
+    }
+
+    .options {
+      display: grid;
+      gap: 14px;
+    }
+
+    .option-btn {
+      width: 100%;
+      padding: 18px 18px;
+      border: 1.5px solid #d8c8ff;
+      border-radius: 14px;
+      background: #fff;
+      color: #3f3f3f;
+      font-size: 18px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover {
+      transform: translateY(-1px);
+      border-color: #a78cf0;
+      box-shadow: 0 8px 18px rgba(121, 97, 220, 0.12);
+    }
+
+    .option-btn.selected {
+      background: linear-gradient(135deg, #8e72ff 0%, #6d9cff 100%);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(118, 102, 230, 0.2);
+    }
+
+    .next-btn {
+      display: block;
+      margin: 26px auto 0;
+      border: none;
+      border-radius: 999px;
+      padding: 16px 34px;
+      background: linear-gradient(135deg, #7d5de8 0%, #5bb2ff 100%);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 14px 24px rgba(100, 103, 232, 0.2);
+    }
+
+    .next-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .next-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result {
+      display: none;
+      margin-top: 22px;
+      padding: 20px;
+      background: #f2f9ff;
+      border: 1px solid #cfe9ff;
+      border-radius: 16px;
+      color: #1f4e79;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .result.show {
+      display: block;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>自恋特质类型自测</h1>
+
+    <div class="quiz-box">
+      <section id="introScreen">
+        <h2 class="intro-title">认识五种特质类型</h2>
+        <p class="intro-note">以下是自我观察的倾向画像，不代表临床诊断或固定人格标签。</p>
+        <ol class="profile-list" id="profileList"></ol>
+        <button class="next-btn" id="startBtn" type="button">开始测试</button>
+      </section>
+
+      <section id="quizScreen" hidden>
+        <div class="question-index" id="questionIndex">第 1 / 32 题</div>
+        <p class="question-index">请根据近半年大多数时候的真实感受作答。</p>
+        <div class="question-text" id="questionText">我希望自己能成为众人关注的焦点。</div>
+
+        <div class="options" id="options"></div>
+
+        <button class="next-btn" id="nextBtn" type="button" disabled>下一题</button>
+      </section>
+
+      <section id="resultScreen" hidden>
+        <div class="result" id="resultBox"></div>
+        <button class="next-btn" id="restartBtn" type="button">再测一次</button>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        dimension: 'grandiose',
+        text: '我希望自己能成为众人关注的焦点。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '当别人注意到我的能力或成就时，我会觉得特别满足。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '我认为自己有一些与众不同、值得被看见的才能。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '在群体中，我常觉得自己适合承担最重要或最显眼的角色。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '我会主动讲述自己的成绩，希望别人充分认识到我的价值。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '我常想象自己将来取得非凡成就、受到广泛赞赏。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'grandiose',
+        text: '如果我的贡献没有被注意到，我会觉得自己的光彩被忽略了。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '别人一句批评的话，可能会让我反复琢磨很久。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '当别人没有回应我时，我容易担心自己被冷落或不受喜欢。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '看到别人受到称赞时，我有时会觉得自己的价值被比下去了。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '我需要别人明确肯定我，才能比较安心地相信自己做得不错。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '没有得到期待中的认可时，我容易感到受伤或羞耻。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '我有时在觉得自己很特别和觉得自己不够好之间摇摆。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'vulnerable',
+        text: '我对关系中的疏远或冷淡特别敏感，即使对方可能另有原因。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '与人相处时，我常不自觉地比较谁更优秀、更有影响力。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '如果别人表现突出，我会很想证明自己比对方更出色。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '感到受威胁时，我容易挑剔或贬低对方的能力。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '我很难真心为竞争对手的成功感到高兴。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '当别人没有认可我的优势时，我可能会变得尖刻或不友善。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'rivalry',
+        text: '在关系中，我有时会优先考虑如何占上风，而不是互相理解。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '我希望别人认为我是身边最善良、最愿意帮助人的人之一。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '做了好事却没人知道时，我会觉得少了重要的满足感。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '我常觉得自己比周围的人更有道德感或更懂得关心他人。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '帮助别人时，我也会在意这是否让别人看见我的价值。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '如果别人没有感谢我的付出，我会觉得自己被亏待了。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'communal',
+        text: '我希望自己被视为团体中不可或缺的支持者或拯救者。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '我觉得自己有时理应得到比别人更多的特殊待遇。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '当事情没有按我的时间或偏好安排时，我会觉得别人不够体谅我。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '我有时认为规则应该为像我这样特别的情况通融。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '我期待别人及时满足我的需要，即使他们手头也有自己的事。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '在合作或关系中，我有时觉得自己应该得到超过自己付出的回报。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      },
+      {
+        dimension: 'entitlement',
+        text: '别人没有优先考虑我的需要时，我容易感到恼火。',
+        options: ['几乎从不', '偶尔如此', '有时如此', '经常如此']
+      }
+    ];
+
+    const profiles = {
+      grandiose: {
+        name: '夸大型（欣赏寻求）',
+        preview: '偏重成就、能见度与被认可。',
+        characteristics: '较重视成就感、影响力和外界认可，表达优势的意愿较强。高分时，可能较难接受被忽略，或低估他人也需要肯定。',
+        factors: '表现导向的环境、以成绩换取认可的经验、气质与社会角色等都可能参与塑造这类应对方式；单凭问卷无法判断个人成因。',
+        attraction: '可能更欣赏自信、目标明确或愿意表达赞赏的人，也可能与重视地位和成就的人互相注意。这是可能的互动模式，不是固定规律。',
+        boundaries: '过度赞美、把你说成“唯一特别的人”，随后催促你作出金钱、忠诚或保密承诺时要放慢脚步。核实承诺、保留独立判断，并向可信任的人交叉确认。',
+        advice: {
+          '恋爱': '把肯定和好奇都留给伴侣，主动询问对方的需要；遇到批评时先听完，再讨论具体行为。',
+          '工作': '用可核对的目标与团队成果衡量表现，也主动分享功劳，避免把反馈理解成对个人价值的全盘否定。',
+          '交友': '练习轮流谈近况，给朋友的成就留出空间；关系不只靠赞赏维持。',
+          '家庭': '表达自己的期待时，也确认家人的界限和选择；避免用成绩或付出来要求特殊回报。'
+        }
+      },
+      vulnerable: {
+        name: '脆弱型（敏感防御）',
+        preview: '更在意评价、冷落和关系安全感。',
+        characteristics: '对批评、忽视和关系变化较敏感，可能反复揣测他人反应；渴望被肯定的同时，也可能担心暴露脆弱。',
+        factors: '气质敏感度、关系中的不确定感、长期批评或附带条件的认可等都可能产生影响；这些只是可能背景，不能据此推断个人经历。',
+        attraction: '可能更容易靠近愿意安抚、提供稳定回应的人；也可能与回应忽冷忽热的人形成反复确认的互动。双方实际相处比类型标签更重要。',
+        boundaries: '冷处理、忽冷忽热或以撤回关爱逼你证明自己的互动，可能让你急于挽回关系。先暂停并核对事实，给自己留出时间，也可和可信任的第三方讨论。',
+        advice: {
+          '恋爱': '把“我担心被拒绝”和“对方确实拒绝我”分开；用具体请求表达需要，避免靠猜测或反复试探确认关系。',
+          '工作': '把反馈拆成可执行的事项，必要时询问具体例子；重大决定尽量等情绪平稳后再作出。',
+          '交友': '直接说出希望如何联系与支持，也给朋友保留忙碌或暂时离开的空间。',
+          '家庭': '为敏感话题设定沟通节奏；可以暂停对话，待双方平静后再继续，而不是用沉默惩罚彼此。'
+        }
+      },
+      rivalry: {
+        name: '竞争对抗型',
+        preview: '容易进入比较、争胜与防御。',
+        characteristics: '在感到地位或能力受威胁时，可能更容易比较、争胜、反驳或挑剔；高分时这些反应可能妨碍合作和修复关系。',
+        factors: '竞争压力、曾经需要靠胜出来获得安全感、团队中的零和评价等都可能强化防御性比较；这不是单一原因，也不等于固定人格。',
+        attraction: '可能欣赏有能力、有主见的人，也可能与同样重视输赢的人互相吸引；若缺少协商，关系容易变成持续较量。',
+        boundaries: '有人故意挑衅、制造比较或逼你立刻证明自己时，容易把互动带入对抗。暂停回应，回到具体事实与共同目标，不必接受被迫竞争。',
+        advice: {
+          '恋爱': '争执时先复述对方观点，确认理解后再表达不同意见；把问题和输赢分开。',
+          '工作': '把个人评价与任务结果区分，明确分工和共同指标；对同事的贡献给出具体认可。',
+          '交友': '留意玩笑是否变成贬低或排名；发生冲突时谈影响和需求，而不是翻旧账或争最后一句。',
+          '家庭': '避免把手足或亲属作比较；意见不合时聚焦当前问题，必要时约定暂停时间。'
+        }
+      },
+      communal: {
+        name: '共同体型（助人形象）',
+        preview: '在意自己是否被看作善良、乐于助人。',
+        characteristics: '重视善良、慷慨、道德感或“不可或缺的帮助者”形象；帮助他人可能带来满足，也可能伴随被看见和被感谢的期待。',
+        factors: '被鼓励承担照顾者角色、通过付出获得接纳、社会对“好人”的奖励等都可能影响这类模式；不能仅凭自测推断原因。',
+        attraction: '可能与需要支持、欣赏照顾或愿意互相付出的人靠近；若边界不清，也可能形成一方长期承担、一方长期接受的关系。',
+        boundaries: '反复制造紧急状况、以“只有你能帮我”施压，或让你因拒绝而内疚的互动值得留意。帮助前先确认能力与意愿，必要时说不并寻求分担。',
+        advice: {
+          '恋爱': '在付出前确认这是自愿选择，而非换取爱或感激；允许伴侣自己解决一部分问题。',
+          '工作': '明确职责、时间和资源，不要因想做“最可靠的人”而长期接下超出职责的工作。',
+          '交友': '练习互相支持，也练习接受帮助；不必通过持续救场证明友谊。',
+          '家庭': '和家人协商照护与家务分工，清楚表达自己的上限，避免把未说出口的期待变成怨气。'
+        }
+      },
+      entitlement: {
+        name: '特权期待型（权利感）',
+        preview: '比较期待优先回应、特殊通融或回报。',
+        characteristics: '较期待他人优先回应、为自己通融或给予相称回报；高分时可能较难察觉他人的时间、资源与拒绝权。',
+        factors: '成长环境中的规则与边界、长期拥有的角色或资源、周围人对特殊待遇的默许等都可能影响期待；自测无法确定具体成因。',
+        attraction: '可能更容易与乐于照顾他人、习惯迁就或欣赏强势决断的人形成互动；关系是否平衡，取决于双方能否表达拒绝与协商。',
+        boundaries: '有人以“你欠我”要求不断让步，或把一次帮助变成长期控制时，要把要求说清并核对双方约定。你也可以练习接受对方合理的拒绝。',
+        advice: {
+          '恋爱': '把期待说成可协商的请求，并询问伴侣是否愿意；关注互惠，而不是默认对方应当满足。',
+          '工作': '事先明确权限、资源和回报标准；提出需求时也说明依据，并尊重团队规则的一致性。',
+          '交友': '留意联系与帮助是否双向；朋友拒绝一次请求，不必等同于不重视这段关系。',
+          '家庭': '将家务、照护和经济支持具体分工；对不同意见寻找可接受的安排，而非要求单方面服从。'
+        }
+      }
+    };
+
+    const noClearTendencyProfile = {
+      name: '没有明显的自恋倾向',
+      characteristics: '本次回答没有显示某一种特质明显突出。希望被肯定、争取空间或偶尔在意评价都是常见的人类体验，需结合持续性和对生活的影响理解。',
+      factors: '没有突出倾向不需要寻找病因。自我评价会随压力、关系和生活阶段变化，本问卷也不能解释个人经历。',
+      attraction: '没有证据表明某一类人会特别被你吸引；通常由共同兴趣、价值观、沟通方式和现实环境共同影响。',
+      boundaries: '任何人都可能遇到欺骗或控制。若有人持续施压、孤立你、限制资源或不尊重拒绝，优先联系可信任的人并寻求专业支持。',
+      advice: {
+        '恋爱': '保持坦诚沟通与相互尊重；遇到持续困扰时及时讨论，而不是只凭一次测试判断关系。',
+        '工作': '明确目标与边界，定期检查压力和需求，必要时寻求同事或主管支持。',
+        '交友': '维持互相支持，也允许彼此有不同的兴趣、节奏和社交边界。',
+        '家庭': '用具体、尊重的方式表达期待；长期冲突可考虑家庭沟通或专业协助。'
+      }
+    };
+
+    const questionIndexEl = document.getElementById('questionIndex');
+    const questionTextEl = document.getElementById('questionText');
+    const optionsEl = document.getElementById('options');
+    const nextBtn = document.getElementById('nextBtn');
+    const resultBox = document.getElementById('resultBox');
+    const profileListEl = document.getElementById('profileList');
+    const introScreen = document.getElementById('introScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const restartBtn = document.getElementById('restartBtn');
+
+    Object.values(profiles).forEach(profile => {
+      const item = document.createElement('li');
+      item.className = 'profile-preview';
+
+      const heading = document.createElement('h3');
+      heading.textContent = profile.name;
+      const description = document.createElement('p');
+      description.textContent = profile.preview;
+
+      item.append(heading, description);
+      profileListEl.appendChild(item);
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      introScreen.hidden = true;
+      quizScreen.hidden = false;
+      renderQuestion();
+    });
+
+    let currentIndex = 0;
+    let selectedAnswers = [];
+
+    function renderQuestion() {
+      const currentQuestion = questions[currentIndex];
+      questionIndexEl.textContent = `第 ${currentIndex + 1} / ${questions.length} 题`;
+      questionTextEl.textContent = currentQuestion.text;
+      optionsEl.innerHTML = '';
+
+      currentQuestion.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.type = 'button';
+        btn.textContent = option;
+
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.option-btn').forEach(item => item.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedAnswers[currentIndex] = index;
+          nextBtn.disabled = false;
+        });
+
+        optionsEl.appendChild(btn);
+      });
+
+      if (selectedAnswers[currentIndex] !== undefined) {
+        const selectedButton = optionsEl.children[selectedAnswers[currentIndex]];
+        if (selectedButton) {
+          selectedButton.classList.add('selected');
+        }
+        nextBtn.disabled = false;
+      } else {
+        nextBtn.disabled = true;
+      }
+    }
+
+    function showResult() {
+      const dimensionScores = Object.fromEntries(
+        Object.keys(profiles).map(dimension => {
+          const questionIndexes = questions
+            .map((question, index) => question.dimension === dimension ? index : -1)
+            .filter(index => index !== -1);
+          const total = questionIndexes.reduce((sum, index) => sum + selectedAnswers[index], 0);
+          return [dimension, total / questionIndexes.length];
+        })
+      );
+      const [dominantDimension, dominantScore] = Object.entries(dimensionScores)
+        .reduce((leader, candidate) => candidate[1] > leader[1] ? candidate : leader);
+      const profile = dominantScore < 1.25
+        ? noClearTendencyProfile
+        : profiles[dominantDimension];
+      const ratingIndex = Math.min(4, Math.floor(dominantScore / 3 * 5));
+      const stars = '★'.repeat(ratingIndex + 1) + '☆'.repeat(4 - ratingIndex);
+      const ratingNames = ['很低', '偏低', '中等', '偏高', '较高'];
+      const levelDescriptions = [
+        '这类反应在本次回答中较少出现。',
+        '这类反应偶尔出现，通常不占主导。',
+        '这类反应在部分情境中会出现，可以留意触发它的关系或压力。',
+        '这类反应出现较频繁，可能值得观察它对关系、工作或情绪的影响。',
+        '这类反应在多个情境中较常出现；若已造成困扰，可考虑和心理健康专业人士进一步讨论。'
+      ];
+
+      resultBox.replaceChildren();
+
+      const heading = document.createElement('h2');
+      heading.textContent = `你的特质画像：${profile.name}`;
+      const score = document.createElement('p');
+      score.className = 'result-score';
+      score.textContent = `倾向评分：${stars}（${ratingIndex + 1}/5，${ratingNames[ratingIndex]}）`;
+      const level = document.createElement('p');
+      level.className = 'result-level';
+      level.textContent = levelDescriptions[ratingIndex];
+      resultBox.append(heading, score, level);
+
+      const resultSections = [
+        ['主要特征', `${profile.characteristics} ${levelDescriptions[ratingIndex]}`],
+        ['可能的形成因素', profile.factors],
+        ['可能吸引或靠近你的人', profile.attraction],
+        ['易受影响的情境与自我保护', profile.boundaries]
+      ];
+
+      resultSections.forEach(([title, text]) => {
+        const section = document.createElement('section');
+        section.className = 'result-section';
+        const sectionHeading = document.createElement('h3');
+        sectionHeading.textContent = title;
+        const paragraph = document.createElement('p');
+        paragraph.textContent = text;
+        section.append(sectionHeading, paragraph);
+        resultBox.appendChild(section);
+      });
+
+      const adviceSection = document.createElement('section');
+      adviceSection.className = 'result-section';
+      const adviceHeading = document.createElement('h3');
+      adviceHeading.textContent = '不同生活场景的小建议';
+      const adviceList = document.createElement('ul');
+      adviceList.className = 'result-advice';
+      Object.entries(profile.advice).forEach(([area, suggestion]) => {
+        const item = document.createElement('li');
+        const areaLabel = document.createElement('strong');
+        areaLabel.textContent = `${area}：`;
+        item.append(areaLabel, document.createTextNode(suggestion));
+        adviceList.appendChild(item);
+      });
+      adviceSection.append(adviceHeading, adviceList);
+      resultBox.appendChild(adviceSection);
+
+      const caveat = document.createElement('small');
+      caveat.className = 'result-caveat';
+      caveat.textContent = '星级仅表示本问卷中得分最高维度的自我报告倾向，不代表临床严重程度；本测试不是经验证的诊断工具，也不能诊断NPD。若相关困扰持续影响生活或关系，请咨询心理健康专业人士。';
+      resultBox.appendChild(caveat);
+      resultBox.classList.add('show');
+      quizScreen.hidden = true;
+      resultScreen.hidden = false;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < questions.length - 1) {
+        currentIndex += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      currentIndex = 0;
+      selectedAnswers = [];
+      resultBox.replaceChildren();
+      resultBox.classList.remove('show');
+      resultScreen.hidden = true;
+      quizScreen.hidden = false;
+      nextBtn.textContent = '下一题';
+      renderQuestion();
+    });
+
+  </script>
+</body>
+</html>
