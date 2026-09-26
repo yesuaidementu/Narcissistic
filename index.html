@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>亚露自恋特质类型自测</title>
+  <title>自恋特质类型自测</title>
   <style>
     * {
       box-sizing: border-box;
@@ -187,7 +187,8 @@
 
         <div class="options" id="options"></div>
 
-        <button class="next-btn" id="nextBtn" type="button" disabled>下一题</button>
+        <button class="next-btn" id="prevBtn" type="button" disabled>上一题</button>
+
       </section>
 
       <section id="resultScreen" hidden>
@@ -451,7 +452,7 @@
     const questionIndexEl = document.getElementById('questionIndex');
     const questionTextEl = document.getElementById('questionText');
     const optionsEl = document.getElementById('options');
-    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
     const resultBox = document.getElementById('resultBox');
     const profileListEl = document.getElementById('profileList');
     const introScreen = document.getElementById('introScreen');
@@ -480,12 +481,14 @@
 
     let currentIndex = 0;
     let selectedAnswers = [];
+    let isAdvancing = false;
 
     function renderQuestion() {
       const currentQuestion = questions[currentIndex];
       questionIndexEl.textContent = `第 ${currentIndex + 1} / ${questions.length} 题`;
       questionTextEl.textContent = currentQuestion.text;
       optionsEl.innerHTML = '';
+      prevBtn.disabled = currentIndex === 0 || isAdvancing;
 
       currentQuestion.options.forEach((option, index) => {
         const btn = document.createElement('button');
@@ -493,25 +496,32 @@
         btn.type = 'button';
         btn.textContent = option;
 
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.option-btn').forEach(item => item.classList.remove('selected'));
+        if (selectedAnswers[currentIndex] === index) {
           btn.classList.add('selected');
+        }
+
+        btn.addEventListener('click', () => {
+          if (isAdvancing) return;
+
           selectedAnswers[currentIndex] = index;
-          nextBtn.disabled = false;
+          btn.classList.add('selected');
+          isAdvancing = true;
+          prevBtn.disabled = true;
+
+          setTimeout(() => {
+            if (currentIndex < questions.length - 1) {
+              currentIndex += 1;
+              isAdvancing = false;
+              renderQuestion();
+            } else {
+              isAdvancing = false;
+              showResult();
+            }
+          }, 180);
         });
 
         optionsEl.appendChild(btn);
       });
-
-      if (selectedAnswers[currentIndex] !== undefined) {
-        const selectedButton = optionsEl.children[selectedAnswers[currentIndex]];
-        if (selectedButton) {
-          selectedButton.classList.add('selected');
-        }
-        nextBtn.disabled = false;
-      } else {
-        nextBtn.disabled = true;
-      }
     }
 
     function showResult() {
@@ -595,23 +605,22 @@
       resultScreen.hidden = false;
     }
 
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < questions.length - 1) {
-        currentIndex += 1;
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0 && !isAdvancing) {
+        currentIndex -= 1;
         renderQuestion();
-      } else {
-        showResult();
       }
     });
 
     restartBtn.addEventListener('click', () => {
       currentIndex = 0;
       selectedAnswers = [];
-      resultBox.replaceChildren();
-      resultBox.classList.remove('show');
+      isAdvancing = false;
+
       resultScreen.hidden = true;
+      introScreen.hidden = true;
       quizScreen.hidden = false;
-      nextBtn.textContent = '下一题';
+
       renderQuestion();
     });
 
